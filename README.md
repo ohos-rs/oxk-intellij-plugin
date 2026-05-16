@@ -37,11 +37,6 @@ Oxk formats ArkTS/ArkUI and related project files.
 
 ## Installation
 
-- Using the IDE built-in plugin system:
-
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "Oxk"</kbd> >
-  <kbd>Install</kbd>
-
 - Manually:
 
   Download the [latest release](https://github.com/ohos-rs/oxk-intellij-plugin/releases/latest) and install it
