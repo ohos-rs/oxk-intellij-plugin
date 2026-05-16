@@ -4,13 +4,15 @@ import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 fun properties(key: String) = providers.gradleProperty(key)
 fun environment(key: String) = providers.environmentVariable(key)
+fun splitGradleProperty(key: String) = properties(key).map {
+    it.split(',').map(String::trim).filter(String::isNotEmpty)
+}
 
 plugins {
     id("java") // Java support
     alias(libs.plugins.kotlin) // Kotlin support
     alias(libs.plugins.intelliJPlatform) // IntelliJ Platform Gradle Plugin
     alias(libs.plugins.changelog) // Gradle Changelog Plugin
-    alias(libs.plugins.qodana) // Gradle Qodana Plugin
     alias(libs.plugins.kover) // Gradle Kover Plugin
 }
 
@@ -33,13 +35,23 @@ dependencies {
 
     // IntelliJ Platform Gradle Plugin Dependencies Extension - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html
     intellijPlatform {
-        create(properties("platformType"), properties("platformVersion"))
+        val localPlatformPath = properties("localPlatformPath").orNull
+            ?.takeIf { it.isNotBlank() }
+            ?.takeIf { file(it).exists() }
+
+        if (localPlatformPath != null) {
+            local(localPlatformPath)
+            localPlugin(file("$localPlatformPath/plugins/openharmony"))
+            localPlugin(file("$localPlatformPath/plugins/json"))
+        } else {
+            create(properties("platformType"), properties("platformVersion"))
+        }
 
         // Plugin Dependencies. Uses `platformBundledPlugins` property from the gradle.properties file for bundled IntelliJ Platform plugins.
-        bundledPlugins(properties("platformBundledPlugins").map { it.split(',') })
+        bundledPlugins(splitGradleProperty("platformBundledPlugins"))
 
         // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file for plugin from JetBrains Marketplace.
-        plugins(properties("platformPlugins").map { it.split(',') })
+        plugins(splitGradleProperty("platformPlugins"))
 
         pluginVerifier()
         zipSigner()
@@ -110,18 +122,6 @@ intellijPlatform {
     }
 
     pluginVerification {
-        // Custom IDEs to avoid disk space issues as the number of supported IDE versions grow.
-        // https://github.com/JetBrains/intellij-platform-plugin-template/issues/462#issuecomment-2745197887
-        ides {
-            val productReleases = ProductReleasesValueSource().get()
-            val reducedProductReleases =
-                if (productReleases.size > 2)
-                    listOf(productReleases.first(), productReleases.last())
-                else productReleases
-
-            // TODO: Replace this with a non-deprecated alternative.
-            ides(reducedProductReleases)
-        }
         ignoredProblemsFile.set(File("plugin-verifier-ignored-problems.txt"))
     }
 }
@@ -150,7 +150,7 @@ tasks {
 
     runIde {
         systemProperty("idea.log.trace.categories",
-            "#com.github.oxc.project.oxcintellijplugin,#com.intellij.platform.lsp")
+            "#com.github.ohosrs.oxkintellijplugin,#org.wso2.lsp4intellij")
     }
 }
 

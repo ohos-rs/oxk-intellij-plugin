@@ -1,28 +1,34 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.oxc.project.oxcintellijplugin</id>
-    <name>Oxc</name>
-    <vendor email="boshenc@gmail.com" url="https://oxc.rs">Oxc</vendor>
+    <id>com.github.ohosrs.oxkintellijplugin</id>
+    <name>Oxk</name>
+    <vendor email="southsouth0929@foxmail.com" url="https://github.com/ohos-rs/oxc-ark">ohos-rs</vendor>
 
     <depends>com.intellij.modules.platform</depends>
-    <depends>JavaScript</depends>
-    <depends>com.intellij.modules.lsp</depends>
+    <depends>com.intellij.modules.json</depends>
+    <depends>com.huawei.ohos</depends>
 
     <resource-bundle>messages.OxfmtBundle</resource-bundle>
     <resource-bundle>messages.OxlintBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <notificationGroup id="Oxc" displayType="BALLOON"/>
-        <iconProvider implementation="com.github.oxc.project.oxcintellijplugin.OxcIconProvider"/>
+        <notificationGroup id="Oxk" displayType="BALLOON"/>
+        <iconProvider implementation="com.github.ohosrs.oxkintellijplugin.OxkIconProvider"/>
 
-        <platform.lsp.serverSupportProvider
-                implementation="com.github.oxc.project.oxcintellijplugin.oxfmt.lsp.OxfmtLspServerSupportProvider"/>
-        <platform.lsp.serverSupportProvider
-                implementation="com.github.oxc.project.oxcintellijplugin.oxlint.lsp.OxlintLspServerSupportProvider"/>
+        <postStartupActivity implementation="com.github.ohosrs.oxkintellijplugin.lsp.OxkLspStartupActivity"/>
+        <annotator
+                language="JavaScript"
+                implementationClass="com.github.ohosrs.oxkintellijplugin.lsp.OxkCachedLspDiagnosticAnnotator"/>
+        <annotator
+                language="TypeScript"
+                implementationClass="com.github.ohosrs.oxkintellijplugin.lsp.OxkCachedLspDiagnosticAnnotator"/>
+        <annotator
+                language="ExtendTypeScript"
+                implementationClass="com.github.ohosrs.oxkintellijplugin.lsp.OxkCachedLspDiagnosticAnnotator"/>
 
         <projectConfigurable
                 parentId="tools"
-                instance="com.github.oxc.project.oxcintellijplugin.oxlint.settings.OxlintConfigurable"
+                instance="com.github.ohosrs.oxkintellijplugin.oxlint.settings.OxlintConfigurable"
                 id="OxlintConfigurable"
                 nonDefaultProject="false"
                 bundle="messages.OxlintBundle"
@@ -30,7 +36,7 @@
         />
         <projectConfigurable
                 parentId="tools"
-                instance="com.github.oxc.project.oxcintellijplugin.oxfmt.settings.OxfmtConfigurable"
+                instance="com.github.ohosrs.oxkintellijplugin.oxfmt.settings.OxfmtConfigurable"
                 id="OxfmtConfigurable"
                 nonDefaultProject="false"
                 bundle="messages.OxfmtBundle"
@@ -38,43 +44,43 @@
         />
 
         <actionOnSaveInfoProvider
-                id="OxcOnSaveInfoProvider"
-                implementation="com.github.oxc.project.oxcintellijplugin.settings.OxcOnSaveInfoProvider"
+                id="OxkOnSaveInfoProvider"
+                implementation="com.github.ohosrs.oxkintellijplugin.settings.OxkOnSaveInfoProvider"
                 order="after FormatOnSaveInfoProvider, after EsLintOnSaveInfoProvider, before FileWatcherOnSaveInfoProvider, before UploadOnSaveInfoProvider"
         />
 
         <actionOnSave
                 id="OxlintFixAllOnSaveAction"
-                implementation="com.github.oxc.project.oxcintellijplugin.oxlint.actions.OxlintFixAllOnSaveAction"
+                implementation="com.github.ohosrs.oxkintellijplugin.oxlint.actions.OxlintFixAllOnSaveAction"
                 order="first, before FormatOnSaveAction"
         />
         <actionOnSave
                 id="OxfmtFixAllOnSaveAction"
-                implementation="com.github.oxc.project.oxcintellijplugin.oxfmt.actions.OxfmtFixAllOnSaveAction"
+                implementation="com.github.ohosrs.oxkintellijplugin.oxfmt.actions.OxfmtFixAllOnSaveAction"
                 order="first, before FormatOnSaveAction"
         />
     </extensions>
 
     <extensions defaultExtensionNs="JavaScript">
-        <JsonSchema.ProviderFactory implementation="com.github.oxc.project.oxcintellijplugin.oxlint.OxlintSchemaProviderFactory"/>
-        <JsonSchema.ProviderFactory implementation="com.github.oxc.project.oxcintellijplugin.oxfmt.OxfmtSchemaProviderFactory"/>
+        <JsonSchema.ProviderFactory implementation="com.github.ohosrs.oxkintellijplugin.oxlint.OxlintSchemaProviderFactory"/>
+        <JsonSchema.ProviderFactory implementation="com.github.ohosrs.oxkintellijplugin.oxfmt.OxfmtSchemaProviderFactory"/>
     </extensions>
 
     <actions>
         <action
                 id="OxlintApplyFixAllAction"
-                text="Apply Oxlint Quick Fixes"
-                description="Apply Oxlint quick fixes"
-                class="com.github.oxc.project.oxcintellijplugin.oxlint.actions.OxlintFixAllAction"
+                text="Apply Oxk Lint Quick Fixes"
+                description="Apply Oxk lint quick fixes"
+                class="com.github.ohosrs.oxkintellijplugin.oxlint.actions.OxlintFixAllAction"
         >
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </action>
         <action
                 id="OxfmtApplyFixAllAction"
-                text="Apply Oxfmt Quick Fixes"
-                description="Apply Oxfmt quick fixes"
-                class="com.github.oxc.project.oxcintellijplugin.oxfmt.actions.OxfmtFixAllAction"
+                text="Apply Oxk Format"
+                description="Format with Oxk"
+                class="com.github.ohosrs.oxkintellijplugin.oxfmt.actions.OxfmtFixAllAction"
         >
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
@@ -83,19 +89,12 @@
 
     <applicationListeners>
         <listener
-                class="com.github.oxc.project.oxcintellijplugin.oxlint.listeners.OxlintConfigWatcher"
+                class="com.github.ohosrs.oxkintellijplugin.oxlint.listeners.OxlintConfigWatcher"
                 topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"
         />
         <listener
-                class="com.github.oxc.project.oxcintellijplugin.oxfmt.listeners.OxfmtConfigWatcher"
+                class="com.github.ohosrs.oxkintellijplugin.oxfmt.listeners.OxfmtConfigWatcher"
                 topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"
         />
     </applicationListeners>
-
-    <projectListeners>
-        <listener class="com.github.oxc.project.oxcintellijplugin.oxlint.listeners.OxlintEditorWatcher"
-                topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
-        <listener class="com.github.oxc.project.oxcintellijplugin.oxfmt.listeners.OxfmtEditorWatcher"
-                topic="com.intellij.openapi.fileEditor.FileEditorManagerListener"/>
-    </projectListeners>
 </idea-plugin>

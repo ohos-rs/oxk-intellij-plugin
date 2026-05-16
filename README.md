@@ -1,18 +1,16 @@
-# oxc-intellij-plugin
+# oxk-intellij-plugin
 
-[![Build](https://github.com/oxc-project/oxc-intellij-plugin/workflows/Build/badge.svg)](https://github.com/oxc-project/oxc-intellij-plugin/actions/workflows/build.yml?query=branch%3Amain)
-[![Version](https://img.shields.io/jetbrains/plugin/v/27061.svg)](https://plugins.jetbrains.com/plugin/27061-oxc)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/27061.svg)](https://plugins.jetbrains.com/plugin/27061-oxc)
+[![Test](https://github.com/ohos-rs/oxk-intellij-plugin/actions/workflows/test.yml/badge.svg?branch=ohos)](https://github.com/ohos-rs/oxk-intellij-plugin/actions/workflows/test.yml)
 
 <!-- Plugin description -->
 
-# Oxc
+# Oxk
 
-The Oxidation Compiler is creating a suite of high-performance tools for JavaScript and TypeScript.
+Oxk is an ArkTS/ArkUI linting and formatting plugin powered by [ohos-rs/oxc-ark](https://github.com/ohos-rs/oxc-ark).
 
-## Oxlint
+## Lint
 
-A high-performance JavaScript/TypeScript linter.
+Oxk provides oxlint-compatible linting with ArkTS migration rules.
 
 - Inline diagnostics with highlighting for warnings and errors.
 - Quick fixes to resolve issues when available.
@@ -20,23 +18,20 @@ A high-performance JavaScript/TypeScript linter.
 - Automatically apply fixes on save.
 - Configurable run trigger: lint on type or on save.
 - Type-aware rules support for enhanced linting.
-- Custom icons for Oxlint configuration files.
+- Custom icons for Oxk configuration files.
 - JSON schema validation for `.oxlintrc.json` configuration files.
-- Configurable file extensions (.js, .jsx, .ts, .tsx, .cjs, .mjs, .cts, .mts, .vue, .svelte, .astro).
-- Vite+ Support
+- Configurable file extensions including `.ets`, `.js`, `.jsx`, `.ts`, `.tsx`, `.vue`, `.svelte`, and `.astro`.
 
-## Oxfmt
+## Format
 
-A high-performance JavaScript/TypeScript formatter.
+Oxk formats ArkTS/ArkUI and related project files.
 
 - Format code via right-click context menu.
 - Format code with the built-in actions and their shortcuts (<kbd>Code</kbd> > <kbd>Reformat Code</kbd>, <kbd>
   Code</kbd> > <kbd>Reformat File...</kbd>)
 - Automatically format on save.
 - JSON schema validation for `.oxfmtrc.json` configuration files.
-- Configurable file formats JavaScript, TypeScript, JSON, HMYL, Markdown, MDX, CSS, SCSS, GrapghQL, TOML, YAML and
-  more. [See the full list](https://github.com/oxc-project/oxc-intellij-plugin/blob/main/src/main/kotlin/com/github/oxc/project/oxcintellijplugin/oxfmt/settings/OxfmtSettingsState.kt).
-- Vite+ Support
+- Configurable file formats including ArkTS, JavaScript, TypeScript, JSON, Markdown, CSS, TOML, and YAML.
 
 <!-- Plugin description end -->
 
@@ -44,27 +39,36 @@ A high-performance JavaScript/TypeScript formatter.
 
 - Using the IDE built-in plugin system:
 
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "Oxc"</kbd> >
+  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "Oxk"</kbd> >
   <kbd>Install</kbd>
 
 - Manually:
 
-  Download the [latest release](https://github.com/oxc-project/oxc-intellij-plugin/releases/latest) and install it
+  Download the [latest release](https://github.com/ohos-rs/oxk-intellij-plugin/releases/latest) and install it
   manually using
   <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
+
+## Local Oxk
+
+For local development against `ohos-rs/oxc-ark`, configure both Oxk lint and Oxk format manually and point the
+executable path to the native `oxk` binary, for example `../oxc-ark/target/debug/oxk`. The plugin starts linting with
+`oxk lint --lsp` and formatting with `oxk format --lsp`.
+
+You can also launch the IDE with `OXK_BINARY_PATH=/absolute/path/to/oxk` to make automatic detection prefer a local
+native binary.
 
 ## Troubleshooting
 
 IntelliJ provides log files for standard logs as well as the LSP integration. The plugin uses the regular log
 directories which can be found
 here https://www.jetbrains.com/help/idea/directories-used-by-the-ide-to-store-settings-caches-plugins-and-logs.html#logs-directory.
-All LSP logs are output to `language-services/Oxfmt*` or `language-services/Oxlint*`. Non-LSP logs are output to
+All LSP logs are output to `language-services/Oxk*`. Non-LSP logs are output to
 `idea.log`.
 
 The log level can be configured with the information available
 here https://youtrack.jetbrains.com/articles/SUPPORT-A-43/How-to-enable-debug-logging-in-IntelliJ-IDEA.
-`com.github.oxc.project.oxcintellijplugin:all` - Enable debug logging for the plugin.
-`com.intellij.platform.lsp:all` - Enable debug logging for LSP integrations.
+`com.github.ohosrs.oxkintellijplugin:all` - Enable debug logging for the plugin.
+`org.wso2.lsp4intellij:all` - Enable debug logging for DevEco LSP integrations.
 
 Enabling both debug logging for the plugin and debug logging for LSP integrations will typically provide useful
 information for investigating problems.

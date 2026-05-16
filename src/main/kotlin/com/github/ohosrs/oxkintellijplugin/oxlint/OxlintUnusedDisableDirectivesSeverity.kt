@@ -1,0 +1,15 @@
+package com.github.ohosrs.oxkintellijplugin.oxlint
+
+enum class OxlintUnusedDisableDirectivesSeverity {
+    ALLOW,
+    WARN,
+    DENY;
+
+    fun toLspValue(): String {
+        return when (this) {
+            ALLOW -> "allow"
+            WARN -> "warn"
+            DENY -> "deny"
+        }
+    }
+}

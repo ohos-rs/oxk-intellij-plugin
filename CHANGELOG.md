@@ -1,12 +1,19 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
-# oxc-intellij-plugin Changelog
+# oxk-intellij-plugin Changelog
 
 ## [Unreleased]
 
 ### Added
 
-- Add support for detecting Vite+ installations and using the correct tools from that installation.
+- Rename the plugin to Oxk and use `@ohos-rs/oxk` from `ohos-rs/oxc-ark`.
+- Add `.ets` to the default lint and format extension lists.
+- Keep a focused test workflow for PR and manual validation.
+
+### Removed
+
+- Remove Vite+ package detection and `vite.config.*` restart handling.
+- Remove template CI workflows that are unrelated to testing or GitHub release packaging.
 
 ## [0.0.28] - 2026-04-11
 
@@ -60,7 +67,7 @@
 ### Changed
 
 - Minimum IDE version has been updated to 2025.2.1.
-- Update to new Oxc icon.
+- Update to new Oxk icon.
 
 ## [0.0.22] - 2025-12-24
 
@@ -95,7 +102,7 @@
 
 ### Changed
 
-- Replace flags configuration with dedicated UI components. The Oxc language server is shifting away from a generic
+- Replace flags configuration with dedicated UI components. The Oxk language server is shifting away from a generic
   flags approach and this matches it. This also provides a better UI to users by exposing these options directly.
 
 ## [0.0.18] - 2025-10-19
@@ -168,17 +175,17 @@
 
 ### Changed
 
-- Use the new Oxc Language Server config format. This requires Oxlint 0.16.11 or newer.
+- Use the new Oxk Language Server config format. This requires Oxlint 0.16.11 or newer.
 
 ## [0.0.8] - 2025-05-19
 
 ### Added
 
-- Support specifying a manual Oxc language server path to the binary instead of the Node.js wrapper.
+- Support specifying a manual Oxk language server path to the binary instead of the Node.js wrapper.
 
 ### Fixed
 
-- Only show "Apply Oxc Quick Fixes" when the plugin is enabled and the selected file is a supported file extension.
+- Only show "Apply Oxk Quick Fixes" when the plugin is enabled and the selected file is a supported file extension.
 
 ## [0.0.7] - 2025-05-12
 
@@ -227,14 +234,14 @@
 
 ### Fixed
 
-- Fix Oxc icon size.
+- Fix Oxk icon size.
 
 ## [0.0.1] - 2025-04-12
 
 ### Added
 
 - Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
-- Integration with Oxc language server for lint abilities (oxlint)
+- Integration with Oxk language server for lint abilities (oxlint)
   - Highlighting for warnings or errors identified by Oxlint.
   - Quick fixes to fix a warning or error when possible.
   - Command to fix all auto-fixable content within the current text editor.
@@ -243,31 +250,31 @@
 - Schema validation for `.oxlintrc.json` configuration files. (Note: Comments within the .oxlintrc.json
   file are supported, however they show as an error within the IDE due to jsonc not being supported by the IDE.)
 
-[Unreleased]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.28...HEAD
-[0.0.28]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.27...v0.0.28
-[0.0.27]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.26...v0.0.27
-[0.0.26]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.25...v0.0.26
-[0.0.25]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.24...v0.0.25
-[0.0.24]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.23...v0.0.24
-[0.0.23]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.22...v0.0.23
-[0.0.22]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.21...v0.0.22
-[0.0.21]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.20...v0.0.21
-[0.0.20]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.19...v0.0.20
-[0.0.19]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.18...v0.0.19
-[0.0.18]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.17...v0.0.18
-[0.0.17]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.16...v0.0.17
-[0.0.16]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.15...v0.0.16
-[0.0.15]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.14...v0.0.15
-[0.0.14]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.13...v0.0.14
-[0.0.13]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.12...v0.0.13
-[0.0.12]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.11...v0.0.12
-[0.0.11]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.10...v0.0.11
-[0.0.10]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.8...v0.0.10
-[0.0.8]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.7...v0.0.8
-[0.0.7]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.6...v0.0.7
-[0.0.6]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.5...v0.0.6
-[0.0.5]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.4...v0.0.5
-[0.0.4]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.3...v0.0.4
-[0.0.3]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.2...v0.0.3
-[0.0.2]: https://github.com/oxc-project/oxc-intellij-plugin/compare/v0.0.1...v0.0.2
-[0.0.1]: https://github.com/oxc-project/oxc-intellij-plugin/commits/v0.0.1
+[Unreleased]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.28...HEAD
+[0.0.28]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.27...v0.0.28
+[0.0.27]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.26...v0.0.27
+[0.0.26]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.25...v0.0.26
+[0.0.25]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.24...v0.0.25
+[0.0.24]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.23...v0.0.24
+[0.0.23]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.22...v0.0.23
+[0.0.22]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.21...v0.0.22
+[0.0.21]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.20...v0.0.21
+[0.0.20]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.19...v0.0.20
+[0.0.19]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.18...v0.0.19
+[0.0.18]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.17...v0.0.18
+[0.0.17]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.16...v0.0.17
+[0.0.16]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.15...v0.0.16
+[0.0.15]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.14...v0.0.15
+[0.0.14]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.13...v0.0.14
+[0.0.13]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.12...v0.0.13
+[0.0.12]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.11...v0.0.12
+[0.0.11]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.10...v0.0.11
+[0.0.10]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.8...v0.0.10
+[0.0.8]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.7...v0.0.8
+[0.0.7]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.6...v0.0.7
+[0.0.6]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.5...v0.0.6
+[0.0.5]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.4...v0.0.5
+[0.0.4]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.3...v0.0.4
+[0.0.3]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.2...v0.0.3
+[0.0.2]: https://github.com/ohos-rs/oxk-intellij-plugin/compare/v0.0.1...v0.0.2
+[0.0.1]: https://github.com/ohos-rs/oxk-intellij-plugin/commits/v0.0.1

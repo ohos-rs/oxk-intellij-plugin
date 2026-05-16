@@ -1,0 +1,17 @@
+package com.github.ohosrs.oxkintellijplugin.extensions
+
+import com.github.ohosrs.oxkintellijplugin.oxfmt.OxfmtPackage
+import com.github.ohosrs.oxkintellijplugin.oxlint.OxlintPackage
+import com.intellij.openapi.vfs.VirtualFile
+
+fun VirtualFile.isOxlintJsonConfigFile(): Boolean =
+    OxlintPackage.configValidJsonExtensions.map { "${OxlintPackage.CONFIG_NAME}.$it" }.contains(this.name)
+
+fun VirtualFile.isOxlintConfigFile(): Boolean =
+    isOxlintJsonConfigFile() || this.name == OxlintPackage.CONFIG_TS_NAME
+
+fun VirtualFile.isOxfmtJsonConfigFile(): Boolean =
+    OxfmtPackage.CONFIG_VALID_JSON_EXTENSIONS.map { "${OxfmtPackage.CONFIG_NAME}.$it" }.contains(this.name)
+
+fun VirtualFile.isOxfmtConfigFile(): Boolean =
+    isOxfmtJsonConfigFile() || this.name == OxfmtPackage.CONFIG_TS_NAME

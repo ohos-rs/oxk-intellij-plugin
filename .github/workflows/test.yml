@@ -1,0 +1,107 @@
+name: Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      run-ui-tests:
+        description: Run UI test harness
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Gradle Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v6
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: 21
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Install Test Fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci --prefix src/test/testData/oxlint/highlighting/custom-config
+          npm ci --prefix src/test/testData/oxlint/highlighting/nested-config
+          npm ci --prefix src/test/testData/oxlint/highlighting/no-config
+
+      - name: Run Checks
+        run: ./gradlew check --console=plain
+
+      - name: Upload Test Reports
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-reports
+          path: build/reports/tests
+
+  ui:
+    name: UI Test Harness
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs['run-ui-tests'] }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v6
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: 21
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Install Test Fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci --prefix src/test/testData/oxlint/highlighting/custom-config
+          npm ci --prefix src/test/testData/oxlint/highlighting/nested-config
+          npm ci --prefix src/test/testData/oxlint/highlighting/no-config
+
+      - name: Run IDE
+        run: |
+          export DISPLAY=:99.0
+          Xvfb -ac :99 -screen 0 1920x1080x16 &
+          ./gradlew runIdeForUiTests --console=plain &
+
+      - name: Wait for IDE
+        uses: jtalk/url-health-check-action@v4
+        with:
+          url: http://127.0.0.1:8082
+          max-attempts: 15
+          retry-delay: 30s
+
+      - name: Run Tests
+        run: ./gradlew test --console=plain
