@@ -1,7 +1,9 @@
 package com.github.ohosrs.oxkintellijplugin.lsp
 
+import com.intellij.testFramework.LightVirtualFile
 import org.eclipse.lsp4j.InitializeParams
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -29,5 +31,10 @@ class OxkLintServerDefinitionTest {
         assertEquals("vue", languageIdForOxkExtension(".vue"))
         assertEquals("typescript", languageIdForOxkExtension(".ets"))
         assertEquals("typescriptreact", languageIdForOxkExtension(".tsx"))
+    }
+
+    @Test
+    fun oxkUriOrNull_ignoresLightVirtualFiles() {
+        assertNull(LightVirtualFile("Dummy.ts", "const value = 1").oxkUriOrNull())
     }
 }

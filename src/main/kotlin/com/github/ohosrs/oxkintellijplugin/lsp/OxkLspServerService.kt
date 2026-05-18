@@ -65,23 +65,22 @@ class OxkLspServerService(private val project: Project) : Disposable {
         editorFactory.allEditors.forEach(::documentOpened)
     }
 
-    fun ensureDocumentOpened(virtualFile: VirtualFile, document: Document) {
-        if (!isSupported(virtualFile)) {
-            return
-        }
+    fun ensureDocumentOpened(virtualFile: VirtualFile, document: Document): String? {
+        val uri = lspUri(virtualFile) ?: return null
 
         trackDocumentListener(document)
-        val state = openDocuments.compute(virtualFile.oxkUri()) { uri, existing ->
+        val state = openDocuments.compute(uri) { _, existing ->
             existing ?: OpenDocument(
                 uri = uri,
                 virtualFile = virtualFile,
                 document = document,
                 languageId = languageIdForOxkExtension(virtualFile.extension.orEmpty()),
             )
-        } ?: return
+        } ?: return null
 
         ensureStarted(virtualFile)
         sendDidOpenIfReady(state)
+        return uri
     }
 
     fun restart() {
@@ -111,14 +110,15 @@ class OxkLspServerService(private val project: Project) : Disposable {
         if (editor.project != project || editor.isDisposed) {
             return
         }
+        val document = editor.document
+        val virtualFile = FileDocumentManager.getInstance().getFile(document) ?: return
+        val uri = ensureDocumentOpened(virtualFile, document) ?: return
         if (!trackedEditors.add(editor)) {
             return
         }
-        val document = editor.document
-        val virtualFile = FileDocumentManager.getInstance().getFile(document) ?: return
-        ensureDocumentOpened(virtualFile, document)
-        openDocuments[virtualFile.oxkUri()]?.openEditorCount =
-            openDocuments[virtualFile.oxkUri()]?.openEditorCount?.plus(1) ?: 1
+        openDocuments[uri]?.let { state ->
+            state.openEditorCount += 1
+        }
     }
 
     private fun documentClosed(editor: Editor) {
@@ -129,7 +129,7 @@ class OxkLspServerService(private val project: Project) : Disposable {
             return
         }
         val virtualFile = FileDocumentManager.getInstance().getFile(editor.document) ?: return
-        val uri = virtualFile.oxkUri()
+        val uri = virtualFile.oxkUriOrNull() ?: return
         val state = openDocuments[uri] ?: return
         state.openEditorCount = (state.openEditorCount - 1).coerceAtLeast(0)
         if (state.openEditorCount == 0) {
@@ -151,8 +151,8 @@ class OxkLspServerService(private val project: Project) : Disposable {
                     return
                 }
 
-                ensureDocumentOpened(file, event.document)
-                val state = openDocuments[file.oxkUri()] ?: return
+                val uri = ensureDocumentOpened(file, event.document) ?: return
+                val state = openDocuments[uri] ?: return
                 state.version += 1
                 val activeSession = session?.takeIf { it.initialized } ?: return
                 runCatching {
@@ -199,12 +199,15 @@ class OxkLspServerService(private val project: Project) : Disposable {
         val command = runCatching { buildOxkCommand(executable, parameters) }
             .onFailure { LOG.warn("Failed to build Oxk lint LSP command for $executable", it) }
             .getOrElse { return }
-        val rootUri = root.oxkUri().removeSuffix("/")
+        val rootPath = runCatching { root.toNioPath() }
+            .onFailure { LOG.warn("Failed to map Oxk lint LSP root to a local path: ${root.path}", it) }
+            .getOrElse { return }
+        val rootUri = rootPath.toUri().toString().removeSuffix("/")
         LOG.info("Starting Oxk lint LSP: ${command.joinToString(" ")}")
 
         val process = runCatching {
             ProcessBuilder(command.toList())
-                .directory(root.toNioPath().toFile())
+                .directory(rootPath.toFile())
                 .start()
         }.onFailure {
             LOG.warn("Failed to start Oxk lint LSP: ${command.joinToString(" ")}", it)
@@ -323,7 +326,14 @@ class OxkLspServerService(private val project: Project) : Disposable {
 
     private fun isSupported(file: VirtualFile): Boolean {
         val settings = OxlintSettings.getInstance(project)
-        return settings.isEnabled() && settings.fileSupported(file)
+        return settings.isEnabled() && file.isInLocalFileSystem && settings.fileSupported(file)
+    }
+
+    private fun lspUri(file: VirtualFile): String? {
+        if (!isSupported(file)) {
+            return null
+        }
+        return file.oxkUriOrNull()
     }
 
     private fun notifyMissingExecutable() {
@@ -406,3 +416,6 @@ class OxkLspServerService(private val project: Project) : Disposable {
 
 internal fun VirtualFile.oxkUri(): String =
     toNioPath().toUri().toString()
+
+internal fun VirtualFile.oxkUriOrNull(): String? =
+    runCatching { oxkUri() }.getOrNull()
